@@ -1,4 +1,5 @@
 <?php
+    require('connect.php');
     session_start();
     if(isset($_SESSION['login']))
     {
@@ -6,6 +7,36 @@
     }else{
         header('location:login.php');
     }
+
+if(isset($_POST['submit']))
+{
+   $topic=$_POST['topic'];
+   $type=$_POST['type'];
+   $Dur=$_POST['duration'];
+   $location=$_POST['location'];
+   $organizer=$_POST['organizer'];
+   $agenda=$_POST['agenda'];
+   $NDM=$_POST['NDM'];  
+   $mlink=$_POST['mlink'];
+   $sdate=$_POST['sdate'];
+   $stime=$_POST['stime'];
+   $edate=$_POST['edate'];
+   $etime=$_POST['etime'];
+
+   $sql="update meetings set meet_name='$topic',
+   meet_type='$type',meet_duration='$Dur',meet_location='$location',meet_org='$organizer',
+   meet_agenda='$agenda',meet_notes='$NDM',meet_link='$mlink',start_date='$sdate',start_time='$stime',
+   end_date='$edate',end_time='$etime' ";
+   $result=mysqli_query($conn,$sql);
+
+   if($result)
+   {
+       echo"<script>alert('Meeting Update Successfully');</script>";
+   }
+   else{
+       echo "not";
+   }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +72,15 @@
             <?php include "./components/Sidebar.php" ?>
             <div id="content">
                 <?php include "./components/Header.php" ?>
+                <?php
+                    $id=$_GET['id'];
+
+                    $sql="select * from meetings where meeting_id='$id'";
+                    $result=mysqli_query($conn,$sql);
+
+                    while($row=mysqli_fetch_assoc($result))
+                    {
+                ?>
                 <div class="midde_cont">
                     <div class="container-fluid">
                         <div class="row column_title">
@@ -58,29 +98,30 @@
                                 <div class="row my-3">
                                     <div class="col-4">
                                         <label for="inputEmail4" class="form-label">Meeting Topic</label>
-                                        <input type="text" name="topic" class="form-control" id="inputEmail4">
+                                        <input type="text" name="topic" class="form-control" id="inputEmail4" value="<?php echo $row['meet_name'];?>">
                                     </div>
                                     <div class="col-4 d-flex flex-column">
                                         <label for="inputState" class="form-label">Meeting Type</label>
-                                        <select id="inputState" class="form-control" name="type">
-                                            <option selected>Hackathon</option>
+                                        <select id="inputState" class="form-control" name="type" >
+                                            <option><?php echo $row['meet_type'];?></option>
+                                            <option>Hackathon</option>
                                             <option>Conference</option>
                                             <option>Management</option>
                                         </select>
                                     </div>
                                     <div class="col-4">
                                         <label for="inputPassword4" class="form-label">Duration</label>
-                                        <input type="text" name="duration" class="form-control" id="inputPassword4">
+                                        <input type="text" name="duration" class="form-control" id="inputPassword4" value="<?php echo $row['meet_duration'];?>">
                                     </div>
                                 </div>
                                 <div class="row my-3">
                                     <div class="col-6">
                                         <label for="inputPassword4" class="form-label">Location</label>
-                                        <input type="text" name="location" class="form-control" id="inputPassword4">
+                                        <input type="text" name="location" class="form-control" id="inputPassword4" value="<?php echo $row['meet_location'];?>">
                                     </div>
                                     <div class="col-6">
                                         <label for="inputPassword4" class="form-label">Organizer</label>
-                                        <input type="text" name="organizer" class="form-control" id="inputPassword4">
+                                        <input type="text" name="organizer" class="form-control" id="inputPassword4" value="<?php echo $row['meet_org'];?>">
                                     </div>
                                 </div>
                                 <div class="row my-3">
@@ -88,7 +129,7 @@
                                         <label for="exampleFormControlTextarea1"
                                             class="form-label">Agenda/Description</label>
                                         <textarea class="form-control" id="exampleFormControlTextarea1"
-                                            rows="3" name="agenda"></textarea>
+                                            rows="3" name="agenda"><?php echo $row['meet_agenda'];?></textarea>
                                     </div>
                                 </div>
                                 <div class="row my-3">
@@ -96,14 +137,14 @@
                                         <label for="exampleFormControlTextarea1" class="form-label">Note During
                                             Meeting</label>
                                         <textarea class="form-control" id="exampleFormControlTextarea1"
-                                            rows="3" name="NDM"></textarea>
+                                            rows="3" name="NDM"><?php echo $row['meet_notes'];?></textarea>
                                     </div>
                                 </div>
                                 <div class="row my-3">
                                     <div class="col-12">
                                         <label for="exampleFormControlTextarea1" class="form-label">
                                             Meeting Link</label>
-                                        <input type="text" name="mlink" class="form-control" placeholder="Meeting Link">
+                                        <input type="text" name="mlink" class="form-control" placeholder="Meeting Link" value="<?php echo $row['meet_link'];?>">
                                     </div>
                                 </div>
                                 <hr>
@@ -112,19 +153,19 @@
                                 <div class="row my-3">
                                     <div class="col-3">
                                         <label for="inputEmail4" class="form-label">Start Date</label>
-                                        <input type="date" name="sdate" class="form-control" id="inputEmail4">
+                                        <input type="date" name="sdate" class="form-control" id="inputEmail4" value="<?php echo $row['start_date'];?>">
                                     </div>
                                     <div class="col-3">
                                         <label for="inputEmail4" class="form-label">Start Time</label>
-                                        <input type="time" name="stime" class="form-control" id="inputEmail4">
+                                        <input type="time" name="stime" class="form-control" id="inputEmail4" value="<?php echo $row['start_time'];?>">
                                     </div>
                                     <div class="col-3">
                                         <label for="inputEmail4" class="form-label">End Date</label>
-                                        <input type="date" name="edate" class="form-control" id="inputEmail4">
+                                        <input type="date" name="edate" class="form-control" id="inputEmail4" value="<?php echo $row['end_date'];?>">
                                     </div>
                                     <div class="col-3">
                                         <label for="inputEmail4" class="form-label">End Time</label>
-                                        <input type="time" name="etime" class="form-control" id="inputEmail4">
+                                        <input type="time" name="etime" class="form-control" id="inputEmail4" value="<?php echo $row['end_time'];?>">
                                     </div>
                                 </div>
                                 <div class="row my-3">
@@ -137,6 +178,9 @@
 
                     </div>
                 </div>
+                <?php
+                    }
+                ?>
             </div>
         </div>
     </div>
